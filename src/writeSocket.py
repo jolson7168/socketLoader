@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
-
-import time
-import datetime 
-import random
 import socket
+import os
 
- 
-UDP_IP = "127.0.0.1"
+
+UDP_IP = '127.0.0.1'
 UDP_PORT = 5000
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-x=0
+path = '/mnt/data'
 while True:
-	t=datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-	x=x+1
-	print(t+": "+str(x))
-	sock.sendto(t+","+str(random.randint(1, 10))+","+str(random.randint(1, 10))+","+str(random.randint(1, 10))+","+str(random.randint(1, 10))+"\n", (UDP_IP, UDP_PORT))
+    allFiles = os.listdir(path)
+    for aFile in allFiles:
+        if '.json' in aFile:
+            f = open(path+'/'+aFile, 'r')
+            for line in f:
+                if len(line)>100:
+                        sock.sendto(line, (UDP_IP, UDP_PORT))
+            f.close()
