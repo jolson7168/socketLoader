@@ -16,8 +16,6 @@ def getCmdLineParser():
 
     return parser
 
-
-
 if __name__ == '__main__':
 
     p = getCmdLineParser()
