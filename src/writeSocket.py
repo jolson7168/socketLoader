@@ -20,25 +20,25 @@ def getCmdLineParser():
 
 if __name__ == '__main__':
 
-	p = getCmdLineParser()
-	args = p.parse_args()
-	cfg = RawConfigParser()
-	cfg.read(args.config_file)
-
-    UDP_IP = args.hostname
-    UDP_PORT = args.port
+    p = getCmdLineParser()
+    args = p.parse_args()
+    cfg = RawConfigParser()
+    cfg.read(args.config_file)
+    UDP_IP = cfg.get('newtwork','hostname')
+    UDP_PORT = int(cfg.get('newtwork','port'))
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((UDP_IP, UDP_PORT))
     sock.listen(5)
-    path = args.datapath
+    path = cfg.get('data','datapath')
+    minLength = int(cfg.get('data','minlength'))
+    extension = cfg.get('data','extension')
     while True:
-            (clientsocket, address) = sock.accept()
-            allFiles = os.listdir(path)
-            for aFile in allFiles:
-                    if args.extension in aFile:
-                            f = open(path+'/'+aFile, 'r')
-                            for line in f:
-                                    if len(line)>args.minlength:
-                                            clientsocket.sendto(line, (UDP_IP, UDP_PORT))
-                            f.close()
-
+        (clientsocket, address) = sock.accept()
+        allFiles = os.listdir(path)
+        for aFile in allFiles:
+            if extension in aFile:
+                f = open(path+'/'+aFile, 'r')
+                for line in f:
+                   if len(line) > minLength:
+                       clientsocket.sendto(line, (UDP_IP, UDP_PORT))
+                f.close()
